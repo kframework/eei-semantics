@@ -1,0 +1,9 @@
+# See the 'exclude everything except directory foo/bar'
+# example in the gitignore man page to understand how this works.
+/.build/*
+
+!/.build/k
+!/.build/pandoc-tangle
+
+# Directory for storing temporary files like logs, snippets and TODO lists.
+/tmp
