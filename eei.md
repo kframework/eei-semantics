@@ -311,9 +311,9 @@ Saves a copy of the `<accounts>` state in the `<accountStack>` cell.
 2.  Prepend `ACCTDATA` to the `eei.accountStack`.
 
 ```k
-    syntax EEIMethod ::= "EEI.pushAccount"
- // --------------------------------------
-    rule <k> EEI.pushAccount => . ... </k>
+    syntax EEIMethod ::= "EEI.pushAccounts"
+ // ---------------------------------------
+    rule <k> EEI.pushAccounts => . ... </k>
          <accounts> ACCTDATA </accounts>
          <accountsStack> (.List => ListItem(ACCTDATA)) ... </accountsStack>
 ```
@@ -888,7 +888,7 @@ Transfer `VALUE` funds into account `ACCTTO`.
 ```k
     syntax EEIMethod ::= "EEI.transfer" Int Int
  // -------------------------------------------
-    rule <k> EEI.transfer ACCTTO VALUE => ... </k>
+    rule <k> EEI.transfer ACCTTO VALUE => . ... </k>
          <statusCode> _ => EVMC_BALANCE_UNDERFLOW </statusCode>
          <acct> ACCTFROM </acct>
          <account>
@@ -898,7 +898,7 @@ Transfer `VALUE` funds into account `ACCTTO`.
          </account>
       requires VALUE >Int BALFROM
 
-    rule <k> EEI.transfer ACCTTO VALUE => ... </k>
+    rule <k> EEI.transfer ACCTTO VALUE => . ... </k>
          <acct> ACCTFROM </acct>
          <account>
            <id> ACCTFROM </id>
@@ -950,6 +950,24 @@ Helper for setting up the execution engine to run a specific program as if calle
          </callState>
 ```
 
+#### `EEI.callFinish`
+
+**TODO**
+
+```k
+    syntax EEIMethod ::= "EEI.callFinish"
+ // -------------------------------------
+```
+
+#### `EEI.execute`
+
+**TODO**
+
+```k
+    syntax EEIMethod ::= "EEI.execute"
+ // ----------------------------------
+```
+
 #### `EEI.call : Int Int Int List`
 
 **TODO**: Parameterize the `1024` max call depth.
@@ -992,7 +1010,7 @@ Call into account `ACCTTO`, with gas allocation `GAVAIL`, apparent value `APPVAL
 
     rule <k> EEI.call ACCTTO GAVAIL APPVALUE ARGS
           => EEI.pushCallState ~> EEI.pushAccounts
-          ~> EEI.initCallState ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS
+          ~> EEI.callInit ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS
           ~> EEI.execute
           ~> EEI.callFinish
           ~> EEI.execute
