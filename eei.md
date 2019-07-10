@@ -62,7 +62,7 @@ When stored, it's stored in the `<callStack>` cell as a list.
         <callState>
           <callDepth> 0        </callDepth>
           <acct>      0        </acct>      // I_a
-          <program>   .Program </program>   // I_b
+          <program>   .Code    </program>   // I_b
           <caller>    0        </caller>    // I_s
           <callData>  .List    </callData>  // I_d
           <callValue> 0        </callValue> // I_v
@@ -91,11 +91,11 @@ Similar to the `<callState>`, the an `<account>` state can be saved or restored 
 ```k
         <accounts>
           <account multiplicity="*" type="Map">
-            <id>      0        </id>
-            <balance> 0        </balance>
-            <code>    .Program </code>
-            <storage> .Map     </storage>
-            <nonce>   0        </nonce>
+            <id>      0     </id>
+            <balance> 0     </balance>
+            <code>    .Code </code>
+            <storage> .Map  </storage>
+            <nonce>   0     </nonce>
           </account>
         </accounts>
 
@@ -141,10 +141,10 @@ Contract code
 
 The contracts can contain code which can be executed by an execution engine.
 However, the EEI is agnostic to execution engines.
-In this specification, we therefore only allow the constant `.Program` to represent contract code, and an embedder making use of the EEI can extend the `Program` production to include other code.
+In this specification, we therefore only allow the constant `.Code` to represent contract code, and an embedder making use of the EEI can extend the `Code` production to include other code.
 
 ```k
-    syntax Program ::= ".Program"
+    syntax Code ::= ".Code"
 ```
 
 Status Codes
@@ -919,9 +919,9 @@ Transfer `VALUE` funds into account `ACCTTO`.
       requires VALUE <=Int BALFROM
 ```
 
-#### `EEI.callInit : Int Int Int Int Program List`
+#### `EEI.callInit : Int Int Int Int Code List`
 
-Helper for setting up the execution engine to run a specific program as if called by `ACCTFROM` into `ACCTTO`, with apparent value transfer `APPVALUE`, gas allocation `GAVAIL`, program `CODE`, and arguments `ARGS`.
+Helper for setting up the execution engine to run a specific code as if called by `ACCTFROM` into `ACCTTO`, with apparent value transfer `APPVALUE`, gas allocation `GAVAIL`, code `CODE`, and arguments `ARGS`.
 
 1.  Load `CALLDEPTH` from `eei.callState.callDepth`.
 
@@ -935,15 +935,15 @@ Helper for setting up the execution engine to run a specific program as if calle
 
 6.  Set `eei.callState.gas` to `GAVAIL`.
 
-7.  Set `eei.callState.program` to `CODE`.
+7.  Set `eei.callState.code` to `CODE`.
 
 8.  Set `eei.callState.callData` to `ARGS`.
 
 9.  Set `eei.returnData` to the empty `.List`.
 
 ```k
-    syntax EEIMethod ::= "EEI.callInit" Int Int Int Int Program List
- // ----------------------------------------------------------------
+    syntax EEIMethod ::= "EEI.callInit" Int Int Int Int Code List
+ // -------------------------------------------------------------
     rule <sim> EEI.callInit ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS => . ... </sim>
          <callState>
            <callDepth>  CALLDEPTH => CALLDEPTH +Int 1 </callDepth>
