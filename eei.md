@@ -249,6 +249,16 @@ The semantics are provided in three forms:
 These methods are used by the other EEI methods as helpers and intermediates to perform larger more complex tasks.
 They are for the most part not intended to be exposed to the execution engine or Ethereum client for direct usage.
 
+### `#done`
+
+This signals that a call to the EEI is complete, and ready to be consumed.
+As such, it has no transition rules, since only an importing module should be able to remove the `#done` from the `<sim>` cell.
+
+```k
+    syntax EEIMethod ::= "#done"
+ // ----------------------------
+```
+
 **TODO**: `{push,pop,drop}Accounts` should be able to take a specific list of accounts to push/pop/drop, making them more efficient.
 
 #### `EEI.pushCallState`
