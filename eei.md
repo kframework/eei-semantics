@@ -37,7 +37,7 @@ Execution State
 
 Below both a K rule and a prose description of each state transition is given.
 The state is specified using a K *configuration*.
-Each XML-like *cell* contains a field which is relevant to Ethereum client execution (eg. below the first cell is the `<sim>` cell).
+Each XML-like *cell* contains a field which is relevant to Ethereum client execution (eg. below the first cell is the `<eeiK>` cell).
 The default/initial values of the cells are provided along with the declaration of the configuration.
 
 In the texual rules below, we'll refer to cells by accesing subcells with the `.` operator.
@@ -50,7 +50,7 @@ For some cells, we have comments following the cell declarations with the name t
 ```k
     configuration
       <eei>
-        <sim> .EEIMethods:K </sim>
+        <eeiK> .EEIMethods:K </eeiK>
         <statusCode> .StatusCode </statusCode>
         <returnData> .List       </returnData>
 ```
@@ -252,7 +252,7 @@ They are for the most part not intended to be exposed to the execution engine or
 ### `#done`
 
 This signals that a call to the EEI is complete, and ready to be consumed.
-As such, it has no transition rules, since only an importing module should be able to remove the `#done` from the `<sim>` cell.
+As such, it has no transition rules, since only an importing module should be able to remove the `#done` from the `<eeiK>` cell.
 
 ```k
     syntax EEIMethod ::= "#done"
@@ -272,7 +272,7 @@ Saves a copy of the current call state in the `<callStack>`.
 ```k
     syntax EEIMethod ::= "EEI.pushCallState"
  // ----------------------------------------
-    rule <sim> EEI.pushCallState => . ... </sim>
+    rule <eeiK> EEI.pushCallState => . ... </eeiK>
          <callState> CALLSTATE </callState>
          <callStack> (.List => ListItem(CALLSTATE)) ... </callStack>
 ```
@@ -290,7 +290,7 @@ Restores the most recently saved `<callState>`.
 ```k
     syntax EEIMethod ::= "EEI.popCallState"
  // ----------------------------------------
-    rule <sim> EEI.popCallState => . ... </sim>
+    rule <eeiK> EEI.popCallState => . ... </eeiK>
          <callState> _ => CALLSTATE </callState>
          <callStack> (ListItem(CALLSTATE) => .List) ... </callStack>
 ```
@@ -304,7 +304,7 @@ Forgets the most recently saved `<callState>` as reverting back to it will no lo
 ```k
     syntax EEIMethod ::= "EEI.dropCallState"
  // ----------------------------------------
-    rule <sim> EEI.dropCallState => . ... </sim>
+    rule <eeiK> EEI.dropCallState => . ... </eeiK>
          <callStack> (ListItem(_) => .List) ... </callStack>
 ```
 
@@ -319,7 +319,7 @@ Saves a copy of the `<accounts>` state in the `<accountStack>` cell.
 ```k
     syntax EEIMethod ::= "EEI.pushAccounts"
  // ---------------------------------------
-    rule <sim> EEI.pushAccounts => . ... </sim>
+    rule <eeiK> EEI.pushAccounts => . ... </eeiK>
          <accounts> ACCTDATA </accounts>
          <accountsStack> (.List => ListItem(ACCTDATA)) ... </accountsStack>
 ```
@@ -337,7 +337,7 @@ Restores the most recently saved `<accounts>` state.
 ```k
     syntax EEIMethod ::= "EEI.popAccounts"
  // --------------------------------------
-    rule <sim> EEI.popAccounts => . ... </sim>
+    rule <eeiK> EEI.popAccounts => . ... </eeiK>
          <accounts> _ => ACCTDATA </accounts>
          <accountsStack> (ListItem(ACCTDATA) => .List) ... </accountsStack>
 ```
@@ -351,7 +351,7 @@ Forgets the most recently saved `<accounts>` state as reverting back to it will 
 ```k
     syntax EEIMethod ::= "EEI.dropAccounts"
  // ---------------------------------------
-    rule <sim> EEI.dropAccounts => . ... </sim>
+    rule <eeiK> EEI.dropAccounts => . ... </eeiK>
          <accountsStack> (ListItem(_) => .List) ... </accountsStack>
 ```
 
@@ -372,11 +372,11 @@ If the statuscode is not exception, execute `ETHSIMULATIONGOOD`, otherwise execu
 ```k
     syntax EEIMethod ::= "EEI.ifStatus" EEIMethods EEIMethods
  // -------------------------------------------------------------------------
-    rule <sim> EEI.ifStatus ETHSIMULATIONGOOD ETHSIMULATIONBAD => ETHSIMULATIONGOOD ... </sim>
+    rule <eeiK> EEI.ifStatus ETHSIMULATIONGOOD ETHSIMULATIONBAD => ETHSIMULATIONGOOD ... </eeiK>
          <statusCode> STATUSCODE </statusCode>
       requires notBool isExceptionalStatusCode(STATUSCODE)
 
-    rule <sim> EEI.ifStatus ETHSIMULATIONGOOD ETHSIMULATIONBAD => ETHSIMULATIONBAD ... </sim>
+    rule <eeiK> EEI.ifStatus ETHSIMULATIONGOOD ETHSIMULATIONBAD => ETHSIMULATIONBAD ... </eeiK>
          <statusCode> STATUSCODE </statusCode>
       requires isExceptionalStatusCode(STATUSCODE)
 ```
@@ -390,7 +390,7 @@ Executes the given `ETHSIMULATION` if the current status code is not exceptional
 ```k
     syntax EEIMethod ::= "EEI.onGoodStatus" EEIMethods
  // ----------------------------------------------------------
-    rule <sim> EEI.onGoodStatus ETHSIMULATION => EEI.ifStatus ETHSIMULATION .EEIMethods ... </sim>
+    rule <eeiK> EEI.onGoodStatus ETHSIMULATION => EEI.ifStatus ETHSIMULATION .EEIMethods ... </eeiK>
 ```
 
 ### Block and Transaction Information Getters
@@ -407,7 +407,7 @@ Get the coinbase of the current block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockCoinbase"
  // -------------------------------------------
-    rule <sim> EEI.getBlockCoinbase => CBASE ... </sim>
+    rule <eeiK> EEI.getBlockCoinbase => CBASE ... </eeiK>
          <coinbase> CBASE </coinbase>
 ```
 
@@ -420,7 +420,7 @@ Get the difficulty of the current block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockDifficulty"
  // ---------------------------------------------
-    rule <sim> EEI.getBlockDifficulty => DIFF ... </sim>
+    rule <eeiK> EEI.getBlockDifficulty => DIFF ... </eeiK>
          <difficulty> DIFF </difficulty>
 ```
 
@@ -433,7 +433,7 @@ Get the gas limit for the current block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockGasLimit"
  // -------------------------------------------
-    rule <sim> EEI.getBlockGasLimit => GLIMIT ... </sim>
+    rule <eeiK> EEI.getBlockGasLimit => GLIMIT ... </eeiK>
          <gasLimit> GLIMIT </gasLimit>
 ```
 
@@ -457,11 +457,11 @@ If there are not `N` blocks yet, return `0`.
 ```k
     syntax EEIMethod ::= "EEI.getBlockHash" Int
  // -------------------------------------------
-    rule <sim> EEI.getBlockHash N => BLKHASHES[N] ... </sim>
+    rule <eeiK> EEI.getBlockHash N => BLKHASHES[N] ... </eeiK>
          <hashes> BLKHASHES </hashes>
       requires N <Int 256
 
-    rule <sim> EEI.getBlockHash N => 0 ... </sim>
+    rule <eeiK> EEI.getBlockHash N => 0 ... </eeiK>
       requires N >=Int 256
 ```
 
@@ -474,7 +474,7 @@ Get the current block number.
 ```k
     syntax EEIMethod ::= "EEI.getBlockNumber"
  // -----------------------------------------
-    rule <sim> EEI.getBlockNumber => BLKNUMBER ... </sim>
+    rule <eeiK> EEI.getBlockNumber => BLKNUMBER ... </eeiK>
          <number> BLKNUMBER </number>
 ```
 
@@ -487,7 +487,7 @@ Get the timestamp of the last block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockTimestamp"
  // --------------------------------------------
-    rule <sim> EEI.getBlockTimestamp => TSTAMP ... </sim>
+    rule <eeiK> EEI.getBlockTimestamp => TSTAMP ... </eeiK>
          <timestamp> TSTAMP </timestamp>
 ```
 
@@ -500,7 +500,7 @@ Get the gas price of the current transation.
 ```k
     syntax EEIMethod ::= "EEI.getTxGasPrice"
  // ----------------------------------------
-    rule <sim> EEI.getTxGasPrice => GPRICE ... </sim>
+    rule <eeiK> EEI.getTxGasPrice => GPRICE ... </eeiK>
          <gasPrice> GPRICE </gasPrice>
 ```
 
@@ -513,7 +513,7 @@ Get the address which sent this transaction.
 ```k
     syntax EEIMethod ::= "EEI.getTxOrigin"
  // --------------------------------------
-    rule <sim> EEI.getTxOrigin => ORG ... </sim>
+    rule <eeiK> EEI.getTxOrigin => ORG ... </eeiK>
          <origin> ORG </origin>
 ```
 
@@ -530,7 +530,7 @@ Return the address of the currently executing account.
 ```k
     syntax EEIMethod ::= "EEI.getAddress"
  // -------------------------------------
-    rule <sim> EEI.getAddress => ADDR ... </sim>
+    rule <eeiK> EEI.getAddress => ADDR ... </eeiK>
          <acct> ADDR </acct>
 ```
 
@@ -543,7 +543,7 @@ Get the account id of the caller into the current execution.
 ```k
     syntax EEIMethod ::= "EEI.getCaller"
  // ------------------------------------
-    rule <sim> EEI.getCaller => CACCT ... </sim>
+    rule <eeiK> EEI.getCaller => CACCT ... </eeiK>
          <caller> CACCT </caller>
 ```
 
@@ -558,7 +558,7 @@ Returns the calldata associated with this call.
 ```k
     syntax EEIMethod ::= "EEI.getCallData"
  // --------------------------------------
-    rule <sim> EEI.getCallData => CDATA ... </sim>
+    rule <eeiK> EEI.getCallData => CDATA ... </eeiK>
          <callData> CDATA </callData>
 ```
 
@@ -571,7 +571,7 @@ Get the value transferred for the current call.
 ```k
     syntax EEIMethod ::= "EEI.getCallValue"
  // ---------------------------------------
-    rule <sim> EEI.getCallValue => CVALUE ... </sim>
+    rule <eeiK> EEI.getCallValue => CVALUE ... </eeiK>
          <callValue> CVALUE </callValue>
 ```
 
@@ -584,7 +584,7 @@ Get the gas left available for this execution.
 ```k
     syntax EEIMethod ::= "EEI.getGasLeft"
  // -------------------------------------
-    rule <sim> EEI.getGasLeft => GAVAIL ... </sim>
+    rule <eeiK> EEI.getGasLeft => GAVAIL ... </eeiK>
          <gas> GAVAIL </gas>
 ```
 
@@ -599,7 +599,7 @@ Get the return data of the last call.
 ```k
     syntax EEIMethod ::= "EEI.getReturnData"
  // ----------------------------------------
-    rule <sim> EEI.getReturnData => RETDATA ... </sim>
+    rule <eeiK> EEI.getReturnData => RETDATA ... </eeiK>
          <returnData> RETDATA </returnData>
 ```
 
@@ -622,11 +622,11 @@ Deduct the specified amount of gas (`GDEDUCT`) from the available gas.
 ```k
     syntax EEIMethod ::= "EEI.useGas" Int
  // -------------------------------------
-    rule <sim> EEI.useGas GDEDUCT => . ... </sim>
+    rule <eeiK> EEI.useGas GDEDUCT => . ... </eeiK>
          <gas> GAVAIL => GAVAIL -Int GDEDUCT </gas>
       requires GAVAIL >Int GDEDUCT
 
-    rule <sim> EEI.useGas GDEDUCT => . ... </sim>
+    rule <eeiK> EEI.useGas GDEDUCT => . ... </eeiK>
          <statusCode> _ => EVMC_OUT_OF_GAS </statusCode>
          <gas> GAVAIL </gas>
       requires GAVAIL <=Int GDEDUCT
@@ -649,7 +649,7 @@ Return the balance of the current account (`ACCT`).
 ```k
     syntax EEIMethod ::= "EEI.getAccountBalance"
  // --------------------------------------------
-    rule <sim> EEI.getAccountBalance => BAL ... </sim>
+    rule <eeiK> EEI.getAccountBalance => BAL ... </eeiK>
          <acct> ACCT </acct>
          <account>
            <id> ACCT </id>
@@ -669,7 +669,7 @@ Return the code of the current account (`ACCT`).
 ```k
     syntax EEIMethod ::= "EEI.getAccountCode"
  // -----------------------------------------
-    rule <sim> EEI.getAccountCode => ACCTCODE ... </sim>
+    rule <eeiK> EEI.getAccountCode => ACCTCODE ... </eeiK>
          <acct> ACCT </acct>
          <accounts>
            <id> ACCT </id>
@@ -687,7 +687,7 @@ Return the code of the given account `ACCT`.
 ```k
     syntax EEIMethod ::= "EEI.getExternalAccountCode" Int
  // -----------------------------------------------------
-    rule <sim> EEI.getExternalAccountCode ACCT => ACCTCODE ... </sim>
+    rule <eeiK> EEI.getExternalAccountCode ACCT => ACCTCODE ... </eeiK>
          <accounts>
            <id> ACCT </id>
            <code> ACCTCODE </code>
@@ -712,7 +712,7 @@ Return the value at the given `INDEX` in the current executing accout's storage.
 ```k
     syntax EEIMethod ::= "EEI.getAccountStorage" Int
  // ------------------------------------------------
-    rule <sim> EEI.getAccountStorage INDEX => VALUE ... </sim>
+    rule <eeiK> EEI.getAccountStorage INDEX => VALUE ... </eeiK>
          <acct> ACCT </acct>
          <account>
            <id> ACCT </id>
@@ -720,7 +720,7 @@ Return the value at the given `INDEX` in the current executing accout's storage.
            ...
          </account>
 
-    rule <sim> EEI.getAccountStorage INDEX => 0 ... </sim>
+    rule <eeiK> EEI.getAccountStorage INDEX => 0 ... </eeiK>
          <acct> ACCT </acct>
          <account>
            <id> ACCT </id>
@@ -741,7 +741,7 @@ At the given `INDEX` in the executing accounts storage, stores the given `VALUE`
 ```k
     syntax EEIMethod ::= "EEI.setAccountStorage" Int Int
  // ----------------------------------------------------
-    rule <sim> EEI.setAccountStorage INDEX VALUE => . ... </sim>
+    rule <eeiK> EEI.setAccountStorage INDEX VALUE => . ... </eeiK>
          <acct> ACCT </acct>
          <account>
            <id> ACCT </id>
@@ -770,7 +770,7 @@ First we define a log-item, which is an account id and two integer lists (in EVM
 ```k
     syntax EEIMethod ::= "EEI.log" List List
  // ----------------------------------------
-    rule <sim> EEI.log BS1 BS2 => . ... </sim>
+    rule <eeiK> EEI.log BS1 BS2 => . ... </eeiK>
          <acct> ACCT </acct>
          <log> ... (.List => ListItem({ ACCT | BS1 | BS2 })) </log>
 ```
@@ -804,7 +804,7 @@ In any case, the status is set to `EVMC_SUCCESS`.
 ```k
     syntax EEIMethod ::= "EEI.selfDestruct" Int
  // -------------------------------------------
-    rule <sim> EEI.selfDestruct ACCTTO => . ... </sim>
+    rule <eeiK> EEI.selfDestruct ACCTTO => . ... </eeiK>
          <statusCode> _ => EVMC_SUCCESS </statusCode>
          <acct> ACCT </acct>
          <returnData> _ => .List </returnData>
@@ -824,7 +824,7 @@ In any case, the status is set to `EVMC_SUCCESS`.
          </accounts>
       requires ACCTTO =/=K ACCT
 
-    rule <sim> EEI.selfDestruct ACCT => . ... </sim>
+    rule <eeiK> EEI.selfDestruct ACCT => . ... </eeiK>
          <statusCode> _ => EVMC_SUCCESS </statusCode>
          <acct> ACCT </acct>
          <returnData> _ => .List </returnData>
@@ -850,7 +850,7 @@ Set the return data to the given list of `RDATA` as well setting the status code
 ```k
     syntax EEIMethod ::= "EEI.return" List
  // --------------------------------------
-    rule <sim> EEI.return RDATA => . ... </sim>
+    rule <eeiK> EEI.return RDATA => . ... </eeiK>
          <statusCode> _ => EVMC_SUCCESS </statusCode>
          <returnData> _ => RDATA </returnData>
 ```
@@ -866,7 +866,7 @@ Set the return data to the given list of `RDATA` as well setting the status code
 ```k
     syntax EEIMethod ::= "EEI.revert" List
  // --------------------------------------
-    rule <sim> EEI.revert RDATA => . ... </sim>
+    rule <eeiK> EEI.revert RDATA => . ... </eeiK>
          <statusCode> _ => EVMC_REVERT </statusCode>
          <returnData> _ => RDATA </returnData>
 ```
@@ -894,7 +894,7 @@ Transfer `VALUE` funds into account `ACCTTO`.
 ```k
     syntax EEIMethod ::= "EEI.transfer" Int Int
  // -------------------------------------------
-    rule <sim> EEI.transfer ACCTTO VALUE => . ... </sim>
+    rule <eeiK> EEI.transfer ACCTTO VALUE => . ... </eeiK>
          <statusCode> _ => EVMC_BALANCE_UNDERFLOW </statusCode>
          <acct> ACCTFROM </acct>
          <account>
@@ -904,7 +904,7 @@ Transfer `VALUE` funds into account `ACCTTO`.
          </account>
       requires VALUE >Int BALFROM
 
-    rule <sim> EEI.transfer ACCTTO VALUE => . ... </sim>
+    rule <eeiK> EEI.transfer ACCTTO VALUE => . ... </eeiK>
          <acct> ACCTFROM </acct>
          <account>
            <id> ACCTFROM </id>
@@ -944,7 +944,7 @@ Helper for setting up the execution engine to run a specific code as if called b
 ```k
     syntax EEIMethod ::= "EEI.callInit" Int Int Int Int Code List
  // -------------------------------------------------------------
-    rule <sim> EEI.callInit ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS => . ... </sim>
+    rule <eeiK> EEI.callInit ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS => . ... </eeiK>
          <callState>
            <callDepth>  CALLDEPTH => CALLDEPTH +Int 1 </callDepth>
            <caller>     _         => ACCTFROM         </caller>
@@ -1009,19 +1009,19 @@ Call into account `ACCTTO`, with gas allocation `GAVAIL`, apparent value `APPVAL
 ```k
     syntax EEIMethod ::= "EEI.call" Int Int Int List
  // ------------------------------------------------
-    rule <sim> EEI.call ACCTTO GAVAIL APPVALUE ARGS => . ... </sim>
+    rule <eeiK> EEI.call ACCTTO GAVAIL APPVALUE ARGS => . ... </eeiK>
          <statusCode> _ => EVMC_CALL_DEPTH_EXCEEDED </statusCode>
          <callDepth> CALLDEPTH </callDepth>
       requires CALLDEPTH >=Int 1024
 
-    rule <sim> EEI.call ACCTTO GAVAIL APPVALUE ARGS
+    rule <eeiK> EEI.call ACCTTO GAVAIL APPVALUE ARGS
           => EEI.pushCallState ~> EEI.pushAccounts
           ~> EEI.callInit ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS
           ~> EEI.execute
           ~> EEI.callFinish
           ~> EEI.execute
          ...
-         </sim>
+         </eeiK>
          <acct> ACCTFROM </acct>
          <callDepth> CALLDEPTH </callDepth>
          <account>
@@ -1043,11 +1043,11 @@ Call into account `ACCTTO`, transfering value `VALUE`, with gas allocation `GAVA
 ```k
     syntax EEIMethod ::= "EEI.transferCall" Int Int Int List
  // --------------------------------------------------------
-    rule <sim> EEI.transferCall ACCTTO VALUE GAVAIL ARGS
+    rule <eeiK> EEI.transferCall ACCTTO VALUE GAVAIL ARGS
           => EEI.transfer VALUE ACCTTO
           ~> EEI.onGoodStatus (EEI.call ACCTTO VALUE GAVAIL ARGS)
          ...
-         </sim>
+         </eeiK>
 ```
 
 -   `EEI.call` **TODO**
