@@ -230,6 +230,12 @@ The following codes indicate other non-execution errors with the execution engin
 EEI Methods
 -----------
 
+The EEI signals returns results to an outside caller by wrapping it in a `#result`.
+
+```k
+    syntax K ::= "#result" "(" Int ")"
+```
+
 The EEI exports several methods which can be invoked by the VM to interact with the client.
 Here the syntax and semantics of these methods is defined.
 
@@ -247,16 +253,6 @@ The semantics are provided in three forms:
 
 These methods are used by the other EEI methods as helpers and intermediates to perform larger more complex tasks.
 They are for the most part not intended to be exposed to the execution engine or Ethereum client for direct usage.
-
-### `#done`
-
-This signals that a call to the EEI is complete, and ready to be consumed.
-As such, it has no transition rules, since only an importing module should be able to remove the `#done` from the `<eeiK>` cell.
-
-```k
-    syntax EEIMethod ::= "#done"
- // ----------------------------
-```
 
 **TODO**: `{push,pop,drop}Accounts` should be able to take a specific list of accounts to push/pop/drop, making them more efficient.
 
@@ -542,7 +538,7 @@ Get the account id of the caller into the current execution.
 ```k
     syntax EEIMethod ::= "EEI.getCaller"
  // ------------------------------------
-    rule <eeiK> EEI.getCaller => CACCT ... </eeiK>
+    rule <eeiK> EEI.getCaller => #result(CACCT) ... </eeiK>
          <caller> CACCT </caller>
 ```
 
