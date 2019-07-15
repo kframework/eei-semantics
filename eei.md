@@ -388,6 +388,48 @@ Executes the given `ETHSIMULATION` if the current status code is not exceptional
     rule <eeiK> EEI.onGoodStatus ETHSIMULATION => EEI.ifStatus ETHSIMULATION .EEIMethods ... </eeiK>
 ```
 
+#### `EEI.clearConfig`
+
+Resets the configuration.
+
+```k
+    syntax EEIMethod ::= "EEI.clearConfig"
+ // --------------------------------------
+    rule <eeiK> EEI.clearConfig => . ... </eeiK>
+         <callState>
+           <statusCode> _ => .StatusCode </statusCode>
+           <returnData> _ => .List       </returnData>
+           <callDepth>  _ => 0        </callDepth>
+           <acct>       _ => 0        </acct>      // I_a
+           <program>    _ => .Code    </program>   // I_b
+           <caller>     _ => 0        </caller>    // I_s
+           <callData>   _ => .List    </callData>  // I_d
+           <callValue>  _ => 0        </callValue> // I_v
+           <gas>        _ => 0        </gas>       // \mu_g
+         </callState>
+         <callStack> _ => .List </callStack>
+         <substate>
+           <selfDestruct> _ => .Set  </selfDestruct> // A_s
+           <log>          _ => .List </log>          // A_l
+           <refund>       _ => 0     </refund>       // A_r
+         </substate>
+         <accounts>      _ => .Bag  </accounts>
+         <accountsStack> _ => .List </accountsStack>
+         <tx>
+           <gasPrice> _ => 0 </gasPrice> // I_p
+           <origin>   _ => 0 </origin>   // I_o
+         </tx>
+         <block>
+           <hashes>     _ => .List      </hashes>
+           <coinbase>   _ => 0          </coinbase>         // H_c
+        // <logsBloom>  _ => .WordStack </logsBloom>        // H_b
+           <difficulty> _ => 0          </difficulty>       // H_d
+           <number>     _ => 0          </number>           // H_i
+           <gasLimit>   _ => 0          </gasLimit>         // H_l
+           <timestamp>  _ => 0          </timestamp>        // H_s
+         </block>
+```
+
 ### Block and Transaction Information Getters
 
 Many of the methods exported by the EEI simply query for some state of the current block/transaction.
