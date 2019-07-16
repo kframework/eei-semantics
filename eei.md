@@ -4,7 +4,7 @@ EEI specification
 Introduction
 ------------
 
-This document aims to specify an ewasm VM in a way useful to contract writers and VM implementers.
+This document aims to specify an Ethereum VM in a way useful to contract writers and VM implementers (mostly for Ewasm).
 To this end, multiple things are specified:
 
 -   The extra state that a VM needs to have around to successfully respond to calls into the EEI.
