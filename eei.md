@@ -50,7 +50,7 @@ For some cells, we have comments following the cell declarations with the name t
 ```k
     configuration
       <eei>
-        <eeiK> .EEIMethods:K </eeiK>
+        <eeiK> .K </eeiK>
         <statusCode> .StatusCode </statusCode>
         <returnData> .List       </returnData>
 ```
