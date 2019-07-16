@@ -749,7 +749,7 @@ Return the value at the given `INDEX` in the current executing accout's storage.
 ```k
     syntax EEIMethod ::= "EEI.getAccountStorage" Int
  // ------------------------------------------------
-    rule <eeiK> EEI.getAccountStorage INDEX => VALUE ... </eeiK>
+    rule <eeiK> EEI.getAccountStorage INDEX => #result(VALUE) ... </eeiK>
          <acct> ACCT </acct>
          <account>
            <id> ACCT </id>
@@ -757,7 +757,7 @@ Return the value at the given `INDEX` in the current executing accout's storage.
            ...
          </account>
 
-    rule <eeiK> EEI.getAccountStorage INDEX => 0 ... </eeiK>
+    rule <eeiK> EEI.getAccountStorage INDEX => #result(0) ... </eeiK>
          <acct> ACCT </acct>
          <account>
            <id> ACCT </id>
