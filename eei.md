@@ -60,13 +60,13 @@ When stored, it's stored in the `<callStack>` cell as a list.
 
 ```k
         <callState>
-          <callDepth> 0        </callDepth>
-          <acct>      0        </acct>      // I_a
-          <program>   .Code    </program>   // I_b
-          <caller>    0        </caller>    // I_s
-          <callData>  .List    </callData>  // I_d
-          <callValue> 0        </callValue> // I_v
-          <gas>       0        </gas>       // \mu_g
+          <callDepth> 0     </callDepth>
+          <acct>      0     </acct>      // I_a
+          <program>   .Code </program>   // I_b
+          <caller>    0     </caller>    // I_s
+          <callData>  .List </callData>  // I_d
+          <callValue> 0     </callValue> // I_v
+          <gas>       0     </gas>       // \mu_g
         </callState>
 
         <callStack> .List </callStack>
