@@ -975,7 +975,7 @@ Helper for setting up the execution engine to run a specific code as if called b
 
 6.  Set `eei.callState.gas` to `GAVAIL`.
 
-7.  Set `eei.callState.code` to `CODE`.
+7.  Set `eei.callState.program` to `CODE`.
 
 8.  Set `eei.callState.callData` to `ARGS`.
 
