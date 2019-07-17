@@ -399,9 +399,9 @@ Resets the configuration.
     syntax EEIMethod ::= "EEI.clearConfig"
  // --------------------------------------
     rule <eeiK> EEI.clearConfig => . ... </eeiK>
+         <statusCode> _ => .StatusCode </statusCode>
+         <returnData> _ => .List       </returnData>
          <callState>
-           <statusCode> _ => .StatusCode </statusCode>
-           <returnData> _ => .List       </returnData>
            <callDepth>  _ => 0        </callDepth>
            <acct>       _ => 0        </acct>      // I_a
            <program>    _ => .Code    </program>   // I_b
