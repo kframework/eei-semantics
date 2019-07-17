@@ -233,7 +233,9 @@ EEI Methods
 The EEI signals returns results to an outside caller by wrapping it in a `#result`.
 
 ```k
-    syntax K ::= "#result" "(" Int ")"
+    syntax ResultType ::= Int | List
+    syntax K ::= "#result" "(" ResultType ")"
+ // -----------------------------------------
 ```
 
 The EEI exports several methods which can be invoked by the VM to interact with the client.
@@ -444,7 +446,7 @@ Get the coinbase of the current block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockCoinbase"
  // -------------------------------------------
-    rule <eeiK> EEI.getBlockCoinbase => CBASE ... </eeiK>
+    rule <eeiK> EEI.getBlockCoinbase => #result(CBASE) ... </eeiK>
          <coinbase> CBASE </coinbase>
 ```
 
@@ -457,7 +459,7 @@ Get the difficulty of the current block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockDifficulty"
  // ---------------------------------------------
-    rule <eeiK> EEI.getBlockDifficulty => DIFF ... </eeiK>
+    rule <eeiK> EEI.getBlockDifficulty => #result(DIFF) ... </eeiK>
          <difficulty> DIFF </difficulty>
 ```
 
@@ -470,7 +472,7 @@ Get the gas limit for the current block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockGasLimit"
  // -------------------------------------------
-    rule <eeiK> EEI.getBlockGasLimit => GLIMIT ... </eeiK>
+    rule <eeiK> EEI.getBlockGasLimit => #result(GLIMIT) ... </eeiK>
          <gasLimit> GLIMIT </gasLimit>
 ```
 
@@ -494,11 +496,11 @@ If there are not `N` blocks yet, return `0`.
 ```k
     syntax EEIMethod ::= "EEI.getBlockHash" Int
  // -------------------------------------------
-    rule <eeiK> EEI.getBlockHash N => BLKHASHES[N] ... </eeiK>
+    rule <eeiK> EEI.getBlockHash N => #result(BLKHASHES[N]) ... </eeiK>
          <hashes> BLKHASHES </hashes>
       requires N <Int 256
 
-    rule <eeiK> EEI.getBlockHash N => 0 ... </eeiK>
+    rule <eeiK> EEI.getBlockHash N => #result(0) ... </eeiK>
       requires N >=Int 256
 ```
 
@@ -511,7 +513,7 @@ Get the current block number.
 ```k
     syntax EEIMethod ::= "EEI.getBlockNumber"
  // -----------------------------------------
-    rule <eeiK> EEI.getBlockNumber => BLKNUMBER ... </eeiK>
+    rule <eeiK> EEI.getBlockNumber => #result(BLKNUMBER) ... </eeiK>
          <number> BLKNUMBER </number>
 ```
 
@@ -524,7 +526,7 @@ Get the timestamp of the last block.
 ```k
     syntax EEIMethod ::= "EEI.getBlockTimestamp"
  // --------------------------------------------
-    rule <eeiK> EEI.getBlockTimestamp => TSTAMP ... </eeiK>
+    rule <eeiK> EEI.getBlockTimestamp => #result(TSTAMP) ... </eeiK>
          <timestamp> TSTAMP </timestamp>
 ```
 
@@ -537,7 +539,7 @@ Get the gas price of the current transation.
 ```k
     syntax EEIMethod ::= "EEI.getTxGasPrice"
  // ----------------------------------------
-    rule <eeiK> EEI.getTxGasPrice => GPRICE ... </eeiK>
+    rule <eeiK> EEI.getTxGasPrice => #result(GPRICE) ... </eeiK>
          <gasPrice> GPRICE </gasPrice>
 ```
 
@@ -550,7 +552,7 @@ Get the address which sent this transaction.
 ```k
     syntax EEIMethod ::= "EEI.getTxOrigin"
  // --------------------------------------
-    rule <eeiK> EEI.getTxOrigin => ORG ... </eeiK>
+    rule <eeiK> EEI.getTxOrigin => #result(ORG) ... </eeiK>
          <origin> ORG </origin>
 ```
 
@@ -567,7 +569,7 @@ Return the address of the currently executing account.
 ```k
     syntax EEIMethod ::= "EEI.getAddress"
  // -------------------------------------
-    rule <eeiK> EEI.getAddress => ADDR ... </eeiK>
+    rule <eeiK> EEI.getAddress => #result(ADDR) ... </eeiK>
          <acct> ADDR </acct>
 ```
 
@@ -595,7 +597,7 @@ Returns the calldata associated with this call.
 ```k
     syntax EEIMethod ::= "EEI.getCallData"
  // --------------------------------------
-    rule <eeiK> EEI.getCallData => CDATA ... </eeiK>
+    rule <eeiK> EEI.getCallData => #result(CDATA) ... </eeiK>
          <callData> CDATA </callData>
 ```
 
@@ -608,7 +610,7 @@ Get the value transferred for the current call.
 ```k
     syntax EEIMethod ::= "EEI.getCallValue"
  // ---------------------------------------
-    rule <eeiK> EEI.getCallValue => CVALUE ... </eeiK>
+    rule <eeiK> EEI.getCallValue => #result(CVALUE) ... </eeiK>
          <callValue> CVALUE </callValue>
 ```
 
@@ -621,7 +623,7 @@ Get the gas left available for this execution.
 ```k
     syntax EEIMethod ::= "EEI.getGasLeft"
  // -------------------------------------
-    rule <eeiK> EEI.getGasLeft => GAVAIL ... </eeiK>
+    rule <eeiK> EEI.getGasLeft => #result(GAVAIL) ... </eeiK>
          <gas> GAVAIL </gas>
 ```
 
@@ -636,7 +638,7 @@ Get the return data of the last call.
 ```k
     syntax EEIMethod ::= "EEI.getReturnData"
  // ----------------------------------------
-    rule <eeiK> EEI.getReturnData => RETDATA ... </eeiK>
+    rule <eeiK> EEI.getReturnData => #result(RETDATA) ... </eeiK>
          <returnData> RETDATA </returnData>
 ```
 
@@ -686,7 +688,7 @@ Return the balance of the current account (`ACCT`).
 ```k
     syntax EEIMethod ::= "EEI.getAccountBalance"
  // --------------------------------------------
-    rule <eeiK> EEI.getAccountBalance => BAL ... </eeiK>
+    rule <eeiK> EEI.getAccountBalance => #result(BAL) ... </eeiK>
          <acct> ACCT </acct>
          <account>
            <id> ACCT </id>
@@ -706,7 +708,7 @@ Return the code of the current account (`ACCT`).
 ```k
     syntax EEIMethod ::= "EEI.getAccountCode"
  // -----------------------------------------
-    rule <eeiK> EEI.getAccountCode => ACCTCODE ... </eeiK>
+    rule <eeiK> EEI.getAccountCode => #result(ACCTCODE) ... </eeiK>
          <acct> ACCT </acct>
          <accounts>
            <id> ACCT </id>
@@ -724,7 +726,7 @@ Return the code of the given account `ACCT`.
 ```k
     syntax EEIMethod ::= "EEI.getExternalAccountCode" Int
  // -----------------------------------------------------
-    rule <eeiK> EEI.getExternalAccountCode ACCT => ACCTCODE ... </eeiK>
+    rule <eeiK> EEI.getExternalAccountCode ACCT => #result(ACCTCODE) ... </eeiK>
          <accounts>
            <id> ACCT </id>
            <code> ACCTCODE </code>
