@@ -234,7 +234,7 @@ EEI Methods
 The EEI signals returns results to an outside caller by wrapping it in a `#result`.
 
 ```k
-    syntax ResultType ::= Int | List
+    syntax ResultType ::= Int | List | Code
     syntax K ::= "#result" "(" ResultType ")"
  // -----------------------------------------
 ```
@@ -497,7 +497,7 @@ If there are not `N` blocks yet, return `0`.
 ```k
     syntax EEIMethod ::= "EEI.getBlockHash" Int
  // -------------------------------------------
-    rule <eeiK> EEI.getBlockHash N => #result(BLKHASHES[N]) ... </eeiK>
+    rule <eeiK> EEI.getBlockHash N => #result( {BLKHASHES[N]}:>Int ) ... </eeiK>
          <hashes> BLKHASHES </hashes>
       requires N <Int 256
 
