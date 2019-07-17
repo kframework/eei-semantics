@@ -211,7 +211,8 @@ These additional status codes indicate that execution has ended in some non-exce
 -   `EVMC_REVERT` indicates that the contract called `REVERT`.
 
 ```k
-    syntax EndStatusCode ::= "EVMC_SUCCESS"
+    syntax EndStatusCode ::= ExceptionalStatusCode
+                           | "EVMC_SUCCESS"
                            | "EVMC_REVERT"
 ```
 
