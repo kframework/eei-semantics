@@ -78,7 +78,7 @@ k_tangler:=".k"
 k_files:=eei-driver.k eei.k
 java_defn:=$(patsubst %,$(java_dir)/%,$(k_files))
 ocaml_defn:=$(patsubst %,$(ocaml_dir)/%,$(k_files))
-haskell_defn:=$(patsubst %,$(haskell_dir)%,$(k_files))
+haskell_defn:=$(patsubst %,$(haskell_dir)/%,$(k_files))
 
 
 defn: defn-ocaml defn-java defn-haskell
