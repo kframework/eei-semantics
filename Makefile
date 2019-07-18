@@ -2,6 +2,7 @@
 # --------
 
 BUILD_DIR:=$(CURDIR)/.build
+DEFN_DIR:=$(BUILD_DIR)/defn
 BUILD_LOCAL:=$(BUILD_DIR)/local
 LIBRARY_PATH:=$(BUILD_LOCAL)/lib
 PKG_CONFIG_PATH:=$(LIBRARY_PATH)/pkgconfig
@@ -12,7 +13,7 @@ K_SUBMODULE:=$(BUILD_DIR)/k
 PLUGIN_SUBMODULE:=plugin
 
 # need relative path for `pandoc` on MacOS
-PANDOC_TANGLE_SUBMODULE:=.build/pandoc-tangle
+PANDOC_TANGLE_SUBMODULE:=$(BUILD_DIR)/pandoc-tangle
 TANGLER:=$(PANDOC_TANGLE_SUBMODULE)/tangle.lua
 LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
@@ -23,7 +24,7 @@ export LUA_PATH
 all: build
 
 clean:
-	rm -rf .build
+	rm -rf $(BUILD_DIR)
 	git submodule update --init
 
 # Dependencies
@@ -47,30 +48,53 @@ $(PANDOC_TANGLE_SUBMODULE)/make.timestamp:
 
 K_BIN=$(K_SUBMODULE)/k-distribution/target/release/k/bin
 
-# Building
-# --------
+# Definitions
+# -----------
 
-build: build-java
-build-java: .build/java/driver-kompiled/timestamp
+java_dir:=$(DEFN_DIR)/java
+ocaml_dir:=$(DEFN_DIR)/ocaml
+haskell_dir:=$(DEFN_DIR)/haskell
 
 # Tangle definition from *.md files
 
-k_tangler:=".k"
-
-k_files:=eei.k
-java_files:=$(patsubst %,.build/java/%,$(k_files))
-defn_files:=$(java_files)
-
-defn: $(defn_files)
-
-.build/java/%.k: %.md
+$(java_dir)/%.k: %.md
 	@echo "==  tangle: $@"
 	mkdir -p $(dir $@)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(k_tangler)" $< > $@
 
+$(ocaml_dir)/%.k: %.md
+	@echo "==  tangle: $@"
+	mkdir -p $(dir $@)
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(k_tangler)" $< > $@
+
+$(haskell_dir)/%.k: %.md
+	@echo "==  tangle: $@"
+	mkdir -p $(dir $@)
+	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(k_tangler)" $< > $@
+
+
+k_tangler:=".k"
+
+k_files:=eei.k
+java_defn:=$(patsubst %,$(java_dir)/%,$(k_files))
+ocaml_defn:=$(patsubst %,$(ocaml_dir)/%,$(k_files))
+haskell_defn:=$(patsubst %,$(haskell_dir)%,$(k_files))
+
+
+defn: defn-ocaml defn-java defn-haskell
+defn-ocaml: $(ocaml_defn)
+defn-java: $(java_defn)
+defn-haskell: $(haskell_defn)
+
+# Building
+# --------
+
+build: build-java
+build-java: $(BUILD_DIR)/java/driver-kompiled/timestamp
+
 # Java Backend
 
-.build/java/driver-kompiled/timestamp: $(java_files)
+$(BUILD_DIR)/java/driver-kompiled/timestamp: $(java_defn)
 	@echo "== kompile: $@"
 	$(K_BIN)/kompile --debug --main-module EEI --backend java \
-					--syntax-module EEI $< --directory .build/java -I .build/java
+					--syntax-module EEI $< --directory $(BUILD_DIR)/java -I $(BUILD_DIR)/java
