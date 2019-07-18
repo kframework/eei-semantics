@@ -75,7 +75,7 @@ $(haskell_dir)/%.k: %.md
 
 k_tangler:=".k"
 
-k_files:=eei.k
+k_files:=eei-driver.k eei.k
 java_defn:=$(patsubst %,$(java_dir)/%,$(k_files))
 ocaml_defn:=$(patsubst %,$(ocaml_dir)/%,$(k_files))
 haskell_defn:=$(patsubst %,$(haskell_dir)%,$(k_files))
@@ -96,5 +96,5 @@ build-java: $(BUILD_DIR)/java/driver-kompiled/timestamp
 
 $(BUILD_DIR)/java/driver-kompiled/timestamp: $(java_defn)
 	@echo "== kompile: $@"
-	$(K_BIN)/kompile --debug --main-module EEI --backend java \
-					--syntax-module EEI $< --directory $(BUILD_DIR)/java -I $(BUILD_DIR)/java
+	$(K_BIN)/kompile --debug --main-module EEI-DRIVER --backend java \
+					--syntax-module EEI-DRIVER $< --directory $(BUILD_DIR)/java -I $(BUILD_DIR)/java
