@@ -53,7 +53,7 @@ For some cells, we have comments following the cell declarations with the name t
       <eei>
         <eeiK> .K </eeiK>
         <statusCode> .StatusCode </statusCode>
-        <returnData> .List       </returnData>
+        <returnData> .Bytes       </returnData>
 ```
 
 The `<callState>` sub-configuration can be saved/restored when needed between calls.
@@ -235,7 +235,7 @@ EEI Methods
 The EEI signals returns results to an outside caller by wrapping it in a `#result`.
 
 ```k
-    syntax ResultType ::= Int | List | Code | Bytes
+    syntax ResultType ::= Int | Code | Bytes
     syntax K ::= "#result" "(" ResultType ")"
  // -----------------------------------------
 ```
@@ -401,7 +401,7 @@ Resets the configuration.
  // --------------------------------------
     rule <eeiK> EEI.clearConfig => . ... </eeiK>
          <statusCode> _ => .StatusCode </statusCode>
-         <returnData> _ => .List       </returnData>
+         <returnData> _ => .Bytes      </returnData>
          <callState>
            <callDepth>  _ => 0        </callDepth>
            <acct>       _ => 0        </acct>      // I_a
@@ -830,7 +830,7 @@ In any case, the status is set to `EVMC_SUCCESS`.
 
 2.  Add `ACCT` to the set `eei.substate.selfDestruct`.
 
-3.  Set `eei.returnData` to `.List` (empty).
+3.  Set `eei.returnData` to `.Bytes` (empty).
 
 4.  Load `BALFROM` from `eei.accounts[ACCT].balance`.
 
@@ -848,7 +848,7 @@ In any case, the status is set to `EVMC_SUCCESS`.
     rule <eeiK> EEI.selfDestruct ACCTTO => . ... </eeiK>
          <statusCode> _ => EVMC_SUCCESS </statusCode>
          <acct> ACCT </acct>
-         <returnData> _ => .List </returnData>
+         <returnData> _ => .Bytes </returnData>
          <selfDestruct> ... (.Set => SetItem(ACCT)) ... </selfDestruct>
          <accounts>
            <account>
@@ -868,7 +868,7 @@ In any case, the status is set to `EVMC_SUCCESS`.
     rule <eeiK> EEI.selfDestruct ACCT => . ... </eeiK>
          <statusCode> _ => EVMC_SUCCESS </statusCode>
          <acct> ACCT </acct>
-         <returnData> _ => .List </returnData>
+         <returnData> _ => .Bytes </returnData>
          <selfDestruct> ... (.Set => SetItem(ACCT)) ... </selfDestruct>
          <accounts>
            <account>
@@ -880,7 +880,7 @@ In any case, the status is set to `EVMC_SUCCESS`.
          </accounts>
 ```
 
-#### `EEI.return : List`
+#### `EEI.return : Bytes`
 
 Set the return data to the given list of `RDATA` as well setting the status code to `EVMC_SUCCESS`.
 
@@ -889,14 +889,14 @@ Set the return data to the given list of `RDATA` as well setting the status code
 2.  Set `eei.statusCode` to `EVMC_SUCCESS`.
 
 ```k
-    syntax EEIMethod ::= "EEI.return" List
- // --------------------------------------
+    syntax EEIMethod ::= "EEI.return" Bytes
+ // ---------------------------------------
     rule <eeiK> EEI.return RDATA => . ... </eeiK>
          <statusCode> _ => EVMC_SUCCESS </statusCode>
          <returnData> _ => RDATA </returnData>
 ```
 
-#### `EEI.revert : List`
+#### `EEI.revert : Bytes`
 
 Set the return data to the given list of `RDATA` as well setting the status code to `EVMC_REVERT`.
 
@@ -905,8 +905,8 @@ Set the return data to the given list of `RDATA` as well setting the status code
 2.  Set `eei.statusCode` to `EVMC_REVERT`.
 
 ```k
-    syntax EEIMethod ::= "EEI.revert" List
- // --------------------------------------
+    syntax EEIMethod ::= "EEI.revert" Bytes
+ // ---------------------------------------
     rule <eeiK> EEI.revert RDATA => . ... </eeiK>
          <statusCode> _ => EVMC_REVERT </statusCode>
          <returnData> _ => RDATA </returnData>
@@ -980,12 +980,13 @@ Helper for setting up the execution engine to run a specific code as if called b
 
 8.  Set `eei.callState.callData` to `ARGS`.
 
-9.  Set `eei.returnData` to the empty `.List`.
+9.  Set `eei.returnData` to the empty `.Bytes`.
 
 ```k
     syntax EEIMethod ::= "EEI.callInit" Int Int Int Int Code Bytes
  // --------------------------------------------------------------
     rule <eeiK> EEI.callInit ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS => . ... </eeiK>
+         <returnData>   _ => .Bytes                   </returnData>
          <callState>
            <callDepth>  CALLDEPTH => CALLDEPTH +Int 1 </callDepth>
            <caller>     _         => ACCTFROM         </caller>
