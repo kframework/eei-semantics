@@ -30,6 +30,7 @@ requires "domains.k"
 
 module EEI
     imports DOMAINS
+    imports BYTES
 ```
 
 Execution State
@@ -60,13 +61,13 @@ When stored, it's stored in the `<callStack>` cell as a list.
 
 ```k
         <callState>
-          <callDepth> 0     </callDepth>
-          <acct>      0     </acct>      // I_a
-          <program>   .Code </program>   // I_b
-          <caller>    0     </caller>    // I_s
-          <callData>  .List </callData>  // I_d
-          <callValue> 0     </callValue> // I_v
-          <gas>       0     </gas>       // \mu_g
+          <callDepth> 0      </callDepth>
+          <acct>      0      </acct>      // I_a
+          <program>   .Code  </program>   // I_b
+          <caller>    0      </caller>    // I_s
+          <callData>  .Bytes </callData>  // I_d
+          <callValue> 0      </callValue> // I_v
+          <gas>       0      </gas>       // \mu_g
         </callState>
 
         <callStack> .List </callStack>
@@ -234,7 +235,7 @@ EEI Methods
 The EEI signals returns results to an outside caller by wrapping it in a `#result`.
 
 ```k
-    syntax ResultType ::= Int | List | Code
+    syntax ResultType ::= Int | List | Code | Bytes
     syntax K ::= "#result" "(" ResultType ")"
  // -----------------------------------------
 ```
@@ -406,7 +407,7 @@ Resets the configuration.
            <acct>       _ => 0        </acct>      // I_a
            <program>    _ => .Code    </program>   // I_b
            <caller>     _ => 0        </caller>    // I_s
-           <callData>   _ => .List    </callData>  // I_d
+           <callData>   _ => .Bytes   </callData>  // I_d
            <callValue>  _ => 0        </callValue> // I_v
            <gas>        _ => 0        </gas>       // \mu_g
          </callState>
@@ -982,8 +983,8 @@ Helper for setting up the execution engine to run a specific code as if called b
 9.  Set `eei.returnData` to the empty `.List`.
 
 ```k
-    syntax EEIMethod ::= "EEI.callInit" Int Int Int Int Code List
- // -------------------------------------------------------------
+    syntax EEIMethod ::= "EEI.callInit" Int Int Int Int Code Bytes
+ // --------------------------------------------------------------
     rule <eeiK> EEI.callInit ACCTFROM ACCTTO APPVALUE GAVAIL CODE ARGS => . ... </eeiK>
          <callState>
            <callDepth>  CALLDEPTH => CALLDEPTH +Int 1 </callDepth>
@@ -1047,8 +1048,8 @@ Call into account `ACCTTO`, with gas allocation `GAVAIL`, apparent value `APPVAL
     iv.   Call `EEI.execute`.
 
 ```k
-    syntax EEIMethod ::= "EEI.call" Int Int Int List
- // ------------------------------------------------
+    syntax EEIMethod ::= "EEI.call" Int Int Int Bytes
+ // -------------------------------------------------
     rule <eeiK> EEI.call ACCTTO GAVAIL APPVALUE ARGS => . ... </eeiK>
          <statusCode> _ => EVMC_CALL_DEPTH_EXCEEDED </statusCode>
          <callDepth> CALLDEPTH </callDepth>
@@ -1081,8 +1082,8 @@ Call into account `ACCTTO`, transfering value `VALUE`, with gas allocation `GAVA
 2.  Call `EEI.onGoodStatus (EEI.call ACCTTO VALUE GAVAIL ARGS)`.
 
 ```k
-    syntax EEIMethod ::= "EEI.transferCall" Int Int Int List
- // --------------------------------------------------------
+    syntax EEIMethod ::= "EEI.transferCall" Int Int Int Bytes
+ // ---------------------------------------------------------
     rule <eeiK> EEI.transferCall ACCTTO VALUE GAVAIL ARGS
           => EEI.transfer VALUE ACCTTO
           ~> EEI.onGoodStatus (EEI.call ACCTTO VALUE GAVAIL ARGS)
