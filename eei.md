@@ -1016,7 +1016,7 @@ Helper for setting up the execution engine to run a specific code as if called b
  // ----------------------------------
 ```
 
-#### `EEI.call : Int Int Int List`
+#### `EEI.call : Int Int Int Bytes`
 
 **TODO**: Parameterize the `1024` max call depth.
 
@@ -1074,7 +1074,7 @@ Call into account `ACCTTO`, with gas allocation `GAVAIL`, apparent value `APPVAL
       requires CALLDEPTH <Int 1024
 ```
 
-#### `EEI.transferCall : Int Int Int List`
+#### `EEI.transferCall : Int Int Int Bytes`
 
 Call into account `ACCTTO`, transfering value `VALUE`, with gas allocation `GAVAIL`, and arguments `ARGS`.
 
