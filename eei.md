@@ -370,7 +370,7 @@ If the statuscode is not exception, execute `ETHSIMULATIONGOOD`, otherwise execu
 
 ```k
     syntax EEIMethod ::= "EEI.ifStatus" EEIMethods EEIMethods
- // -------------------------------------------------------------------------
+ // ---------------------------------------------------------
     rule <eeiK> EEI.ifStatus ETHSIMULATIONGOOD ETHSIMULATIONBAD => ETHSIMULATIONGOOD ... </eeiK>
          <statusCode> STATUSCODE </statusCode>
       requires notBool isExceptionalStatusCode(STATUSCODE)
@@ -388,7 +388,7 @@ Executes the given `ETHSIMULATION` if the current status code is not exceptional
 
 ```k
     syntax EEIMethod ::= "EEI.onGoodStatus" EEIMethods
- // ----------------------------------------------------------
+ // --------------------------------------------------
     rule <eeiK> EEI.onGoodStatus ETHSIMULATION => EEI.ifStatus ETHSIMULATION .EEIMethods ... </eeiK>
 ```
 
