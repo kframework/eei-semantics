@@ -68,7 +68,7 @@ The file [eei] contains the semantics of the EEI.
 Resources
 =========
 
--   [EEI]: On paper specification of the EEI and ewasm.
+-   [EEI]: On paper specification of the EEI and Ewasm.
 -   [EVM Yellowpaper]: Original specification of EVM.
 -   [KEVM]: Specification of EVM in K.
 
