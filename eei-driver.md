@@ -20,7 +20,8 @@ It only serves to parse an initial program and put it in the `<eeiK>` cell for e
 
   rule <k> PGM:EEIMethods => . </k>
        <eeiK> . => PGM </eeiK>
-
 ```
+
+```k
 endmodule
 ```

@@ -29,7 +29,11 @@ We are using [K Framework] notation to specify the EEI, which makes this specifi
 requires "domains.k"
 
 module EEI
-    imports DOMAINS
+    imports INT
+    imports SET
+    imports LIST
+    imports BOOL
+    imports MAP
     imports BYTES
 ```
 
