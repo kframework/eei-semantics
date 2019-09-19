@@ -19,7 +19,7 @@ LUA_PATH:=$(PANDOC_TANGLE_SUBMODULE)/?.lua;;
 export TANGLER
 export LUA_PATH
 
-.PHONY: all clean deps k-deps tangle-deps ocaml-deps build build-java defn
+.PHONY: all clean deps k-deps tangle-deps llvm-deps build build-java defn
 
 all: build
 
@@ -52,7 +52,7 @@ K_BIN=$(K_SUBMODULE)/k-distribution/target/release/k/bin
 # -----------
 
 java_dir:=$(DEFN_DIR)/java
-ocaml_dir:=$(DEFN_DIR)/ocaml
+llvm_dir:=$(DEFN_DIR)/llvm
 haskell_dir:=$(DEFN_DIR)/haskell
 
 # Tangle definition from *.md files
@@ -62,7 +62,7 @@ $(java_dir)/%.k: %.md
 	mkdir -p $(dir $@)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(k_tangler)" $< > $@
 
-$(ocaml_dir)/%.k: %.md
+$(llvm_dir)/%.k: %.md
 	@echo "==  tangle: $@"
 	mkdir -p $(dir $@)
 	pandoc --from markdown --to "$(TANGLER)" --metadata=code:"$(k_tangler)" $< > $@
@@ -77,12 +77,12 @@ k_tangler:=".k"
 
 k_files:=eei-driver.k eei.k
 java_defn:=$(patsubst %,$(java_dir)/%,$(k_files))
-ocaml_defn:=$(patsubst %,$(ocaml_dir)/%,$(k_files))
+llvm_defn:=$(patsubst %,$(llvm_dir)/%,$(k_files))
 haskell_defn:=$(patsubst %,$(haskell_dir)/%,$(k_files))
 
 
-defn: defn-ocaml defn-java defn-haskell
-defn-ocaml: $(ocaml_defn)
+defn: defn-llvm defn-java defn-haskell
+defn-llvm: $(llvm_defn)
 defn-java: $(java_defn)
 defn-haskell: $(haskell_defn)
 
